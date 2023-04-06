@@ -8,6 +8,9 @@ from profiles_api import serializers
 
 class HelloApiView(APIView):
     '''Test API View'''
+    # Serializer acts like a Form for APIs
+    # It offers field(s) to make use of POST, PUT and PATCH methods.
+    # In this case we have added a 'name' field which can be used to add or update the name
     serializer_class = serializers.HelloSerializer
 
     def get(self, request, format=None):
@@ -53,9 +56,12 @@ class HelloApiView(APIView):
 
 class HelloViewSet(viewsets.ViewSet):
     '''Test API ViewSet'''
+    # Consider then as Djangio function based views and Class based views
+    # APIView set is function based, ViewSet is Class based
 
     serializer_class = serializers.HelloSerializer
 
+    # URL defines in router executes this LIST function to begin with
     def list(self, request):
         '''Return a Hello Message'''
         a_viewset = [
@@ -67,14 +73,14 @@ class HelloViewSet(viewsets.ViewSet):
         return Response({'message': 'Hello!', 'a_viewset': a_viewset})
     
     def create(self, request):
-        '''Create a new Hello Message'''
+        '''Create a new Hello Message like POST method'''
         serializer = self.serializer_class(data=request.data)
         
         if serializer.is_valid():
             name = serializer.validated_data.get('name')
             message = f'Hello {name}'
 
-            return Response({'message': message})
+            return Response({'message': message, 'http_method': 'POST'})
         
         else:
             return Response(
@@ -84,7 +90,7 @@ class HelloViewSet(viewsets.ViewSet):
         
     
     def retrieve(self, request, pk=None):
-        '''Handle getting an object by its ID field'''
+        '''Handle getting an object by its ID field like GET method'''
 
         return Response({'http_method': 'GET'})
 
